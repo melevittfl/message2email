@@ -35,6 +35,7 @@ def message2():
          concatinate the parts and send the e-mail
          If not, store this message in the cache
         """
+        print("Got part of a multi-part message")
         concat_reference = request.args.get("concat-ref")
         concat_total = request.args.get("concat-total")
         concat_part = request.args.get("concat-part")
@@ -42,7 +43,7 @@ def message2():
 
         if cache.get(concat_reference):
             """We've got an existing entry add this message"""
-
+            print("Found reference in the cache")
             other_message = cache.get(concat_reference)
             if other_message['part'] is "1":
                 sms_text = other_message['text'] + text
@@ -52,6 +53,7 @@ def message2():
             print sms_text
             send_sms_email(sms_text)
         else:
+            print("Cache entry not found")
             sms_message_part = {"part": concat_part, "text": text}
             cache.set(concat_reference, sms_message_part)
 
