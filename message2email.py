@@ -25,7 +25,7 @@ def message():
     return """<?xml version="1.0" encoding="UTF-8"?><Response></Response>"""
 
 @app.route('/message2')  # From Nexmo.com
-def message():
+def message2():
     sms = request.args.get('text', "Not Sent")
     send_sms_email(sms)
     return "<html><body>OK</body></html>", 200
