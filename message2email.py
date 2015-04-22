@@ -64,6 +64,8 @@ def message2():
             sms_message_part = {"part": concat_part, "text": text}
             sms_parts = [sms_message_part]
             cache.set(concat_reference, sms_parts)
+    else:
+        send_sms_email(request.args.get('text'))
 
     return "<html><body>OK</body></html>", 200
 
