@@ -1,8 +1,10 @@
 from flask import Flask, request
+from werkzeug.contrib.cache import SimpleCache
 import os
 from postmark import PMMail
 
 app = Flask(__name__)
+cache = SimpleCache()
 
 
 def send_sms_email(sms):
@@ -26,10 +28,33 @@ def message():
 
 @app.route('/message2')  # From Nexmo.com
 def message2():
-    sms = request.args.get('text', "Not Sent")
-    print sms
-    if sms is not "Not Sent":
-        send_sms_email(sms)
+
+    if request.args.get("concat") is "true":
+        """We have one part of a multipart message. We need to
+         check the cache and see if we have another part already. If so,
+         concatinate the parts and send the e-mail
+         If not, store this message in the cache
+        """
+        concat_reference = request.args.get("concat-ref")
+        concat_total = request.args.get("concat-total")
+        concat_part = request.args.get("concat-part")
+        text = request.args.get("text", "Not Sent")
+
+        if cache.get(concat_reference):
+            """We've got an existing entry add this message"""
+
+            other_message = cache.get(concat_reference)
+            if other_message['part'] is "1":
+                sms_text = other_message['text'] + text
+            else:
+                sms_text = text + other_message['text']
+
+            print sms_text
+            send_sms_email(sms_text)
+        else:
+            sms_message_part = {"part": concat_part, "text": text}
+            cache.set(concat_reference, sms_message_part)
+
     return "<html><body>OK</body></html>", 200
 
 if __name__ == '__main__':
