@@ -2,6 +2,7 @@ from flask import Flask, request
 from werkzeug.contrib.cache import SimpleCache
 import os
 from postmark import PMMail
+from operator import itemgetter
 
 app = Flask(__name__)
 cache = SimpleCache()
@@ -28,8 +29,7 @@ def message():
 
 @app.route('/message2')  # From Nexmo.com
 def message2():
-    concat = request.args.get('concat')
-    if concat == u"true":
+    if request.args.get('concat') == u"true":
         """We have one part of a multipart message. We need to
          check the cache and see if we have another part already. If so,
          concatinate the parts and send the e-mail
@@ -41,21 +41,29 @@ def message2():
         concat_part = request.args.get("concat-part")
         text = request.args.get("text", "Not Sent")
 
-        if cache.get(concat_reference):
+        sms_parts = cache.get(concat_reference)
+        if sms_parts:
             """We've got an existing entry add this message"""
             print("Found reference in the cache")
-            other_message = cache.get(concat_reference)
-            if other_message['part'] == "1":
-                sms_text = other_message['text'] + text
-            else:
-                sms_text = text + other_message['text']
+            sms_parts.append({"part": concat_part, "text": text})
 
-            print sms_text
-            send_sms_email(sms_text)
+            if len(sms_parts) == int(concat_total):
+                """We've got all parts of the message"""
+                print("All parts arrived")
+                sms_message = ""
+                for part in sorted(sms_parts, key=itemgetter('part')):
+                    sms_message += part['text']
+
+                print(sms_message)
+                send_sms_email(sms_message)
+            else:
+                cache.set(concat_reference, sms_parts)
+
         else:
             print("Cache entry not found")
             sms_message_part = {"part": concat_part, "text": text}
-            cache.set(concat_reference, sms_message_part)
+            sms_parts = [sms_message_part]
+            cache.set(concat_reference, sms_parts)
 
     return "<html><body>OK</body></html>", 200
 
