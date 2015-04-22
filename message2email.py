@@ -27,7 +27,9 @@ def message():
 @app.route('/message2')  # From Nexmo.com
 def message2():
     sms = request.args.get('text', "Not Sent")
-    send_sms_email(sms)
+    print sms
+    if sms is not "Not Sent":
+        send_sms_email(sms)
     return "<html><body>OK</body></html>", 200
 
 if __name__ == '__main__':
