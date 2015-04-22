@@ -28,8 +28,8 @@ def message():
 
 @app.route('/message2')  # From Nexmo.com
 def message2():
-
-    if request.args.get("concat") is "true":
+    concat = request.args.get('concat')
+    if concat == u"true":
         """We have one part of a multipart message. We need to
          check the cache and see if we have another part already. If so,
          concatinate the parts and send the e-mail
@@ -45,7 +45,7 @@ def message2():
             """We've got an existing entry add this message"""
             print("Found reference in the cache")
             other_message = cache.get(concat_reference)
-            if other_message['part'] is "1":
+            if other_message['part'] == "1":
                 sms_text = other_message['text'] + text
             else:
                 sms_text = text + other_message['text']
