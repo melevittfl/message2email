@@ -17,6 +17,14 @@ def send_sms_email(sms):
     email.send()
 
 
+def search_parts(list_of_parts, part_to_check):
+    """
+    Given a list of parts, checks to see if it exists already
+    Returns The part found if the part to check is already in the list
+    """
+    return next((part for part in list_of_parts if part['part'] == part_to_check), None)
+
+
 @app.route('/')
 def hello_world():
     return 'Hello World!'
@@ -45,6 +53,11 @@ def message2():
         if sms_parts:
             """We've got an existing entry add this message"""
             print("Found reference in the cache")
+
+            if search_parts(sms_parts, concat_part):
+                print("Duplicate part received. Ignoring.")
+                return "<html><body>Duplicate Part</body></html>", 200
+
             sms_parts.append({"part": concat_part, "text": text})
 
             if len(sms_parts) == int(concat_total):
@@ -55,6 +68,7 @@ def message2():
                     sms_message += part['text']
 
                 print(sms_message)
+                cache.clear()
                 send_sms_email(sms_message)
             else:
                 cache.set(concat_reference, sms_parts)
@@ -70,4 +84,4 @@ def message2():
     return "<html><body>OK</body></html>", 200
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=False)
