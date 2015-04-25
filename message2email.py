@@ -1,5 +1,5 @@
 from flask import Flask, request
-from werkzeug.contrib.cache import MemcachedCache
+#from werkzeug.contrib.cache import MemcachedCache
 import os
 from postmark import PMMail
 from operator import itemgetter
@@ -7,7 +7,17 @@ import pylibmc
 
 app = Flask(__name__)
 
-cache = MemcachedCache(os.environ.get('MEMCACHIER_SERVERS'))
+servers = os.environ.get('MEMCACHIER_SERVERS', '').split(',')
+user = os.environ.get('MEMCACHIER_USERNAME', '')
+password = os.environ.get('MEMCACHIER_PASSWORD', '')
+
+cache = pylibmc.Client(servers,
+                       binary=True,
+                       username=user,
+                       password=password,
+                       behaviors={"tcp_nodelay": True, "ketama": True, "no_block": True})
+
+#cache = MemcachedCache(os.environ.get('MEMCACHIER_SERVERS'))
 
 
 def send_sms_email(sms):
