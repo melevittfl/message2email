@@ -21,18 +21,13 @@ cache = pylibmc.Client(servers,
 
 
 def send_sms_email(sms):
-    if app.debug:
-        print("Debug: Email not sent")
-    else:
-        email = PMMail(api_key=os.environ.get('POSTMARK_API_TOKEN'),
-                       subject="One Time Token",
-                       sender="otptest@marklevitt.co.uk",
-                       to="markotpt@marklevitt.co.uk",
-                       text_body=sms)
-        email.send()
-        print("Email sent")
-
-
+    email = PMMail(api_key=os.environ.get('POSTMARK_API_TOKEN'),
+                   subject="One Time Token",
+                   sender="otptest@marklevitt.co.uk",
+                   to="markotpt@marklevitt.co.uk",
+                   text_body=sms)
+    email.send()
+    print("Email sent")
 
 def search_parts(list_of_parts, part_to_check):
     """
