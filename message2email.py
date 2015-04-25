@@ -80,7 +80,7 @@ def message2():
                     sms_message += part['text']
 
                 print(sms_message)
-                cache.clear()
+                cache.delete(concat_reference)
                 send_sms_email(sms_message)
             else:
                 cache.set(concat_reference, sms_parts)
