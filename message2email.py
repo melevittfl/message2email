@@ -27,9 +27,10 @@ def send_sms_email(sms):
         email = PMMail(api_key=os.environ.get('POSTMARK_API_TOKEN'),
                        subject="One Time Token",
                        sender="otptest@marklevitt.co.uk",
-                       to="markotptest@marklevitt.co.uk",
+                       to="markotpt@marklevitt.co.uk",
                        text_body=sms)
         email.send()
+        print("Email sent")
 
 
 
