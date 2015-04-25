@@ -1,11 +1,13 @@
 from flask import Flask, request
-from werkzeug.contrib.cache import SimpleCache
+from werkzeug.contrib.cache import MemcachedCache
 import os
 from postmark import PMMail
 from operator import itemgetter
+import pylibmc
 
 app = Flask(__name__)
-cache = SimpleCache()
+
+cache = MemcachedCache(os.environ.get('MEMCACHIER_SERVERS'))
 
 
 def send_sms_email(sms):
@@ -88,4 +90,4 @@ def message2():
     return "<html><body>OK</body></html>", 200
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
