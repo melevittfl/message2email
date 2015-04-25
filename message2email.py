@@ -14,8 +14,7 @@ password = os.environ.get('MEMCACHIER_PASSWORD', '')
 cache = pylibmc.Client(servers,
                        binary=True,
                        username=user,
-                       password=password,
-                       behaviors={"tcp_nodelay": True, "ketama": True, "no_block": True})
+                       password=password)
 
 #cache = MemcachedCache(os.environ.get('MEMCACHIER_SERVERS'))
 
