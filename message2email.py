@@ -24,11 +24,11 @@ def send_sms_email(sms):
     if app.debug:
         print("Debug: Email not sent")
     else:
-        email = PMMail(api_key= os.environ.get('POSTMARK_API_TOKEN'),
-                   subject="One Time Token",
-                   sender="otptest@marklevitt.co.uk",
-                   to="markotptest@marklevitt.co.uk",
-                   text_body=sms)
+        email = PMMail(api_key=os.environ.get('POSTMARK_API_TOKEN'),
+                       subject="One Time Token",
+                       sender="otptest@marklevitt.co.uk",
+                       to="markotptest@marklevitt.co.uk",
+                       text_body=sms)
         email.send()
 
 
