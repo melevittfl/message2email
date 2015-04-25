@@ -9,12 +9,16 @@ cache = SimpleCache()
 
 
 def send_sms_email(sms):
-    email = PMMail(api_key= os.environ.get('POSTMARK_API_TOKEN'),
+    if app.debug:
+        print("Debug: Email not sent")
+    else:
+        email = PMMail(api_key= os.environ.get('POSTMARK_API_TOKEN'),
                    subject="One Time Token",
                    sender="otptest@marklevitt.co.uk",
-                   to="markotp@marklevitt.co.uk",
+                   to="markotptest@marklevitt.co.uk",
                    text_body=sms)
-    email.send()
+        email.send()
+
 
 
 def search_parts(list_of_parts, part_to_check):
@@ -50,7 +54,7 @@ def message2():
         text = request.args.get("text", "Not Sent")
 
         sms_parts = cache.get(concat_reference)
-        if sms_parts:
+        if sms_parts is not None:
             """We've got an existing entry add this message"""
             print("Found reference in the cache")
 
