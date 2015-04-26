@@ -6,10 +6,11 @@ from operator import itemgetter
 import pylibmc
 
 app = Flask(__name__)
+app.config['DEBUG'] = os.environ.get("DEBUG", "False")
 
 servers = os.environ.get('MEMCACHIER_SERVERS', '').split(',')
-user = os.environ.get('MEMCACHIER_USERNAME', '')
-password = os.environ.get('MEMCACHIER_PASSWORD', '')
+user = os.environ.get('MEMCACHIER_USERNAME', None)
+password = os.environ.get('MEMCACHIER_PASSWORD', None)
 
 cache = pylibmc.Client(servers,
                        binary=True,
@@ -95,4 +96,4 @@ def message2():
     return "<html><body>OK</body></html>", 200
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run()
